@@ -10,7 +10,7 @@ import AddPlace from "../../Routes/AddPlace";
 import EditAccount from "../../Routes/EditAccount";
 import FindAddress from "../../Routes/FindAddress";
 import Home from "../../Routes/Home";
-import OutHome from "../../Routes/OutHome";
+import Login from "../../Routes/Login";
 import PhoneLogin from "../../Routes/PhoneLogin";
 import Places from "../../Routes/Places";
 import Ride from "../../Routes/Ride";
@@ -29,7 +29,7 @@ const AppPresenter: React.FunctionComponent<IProps> = ({ isLoggedIn }) => (
 const LoggedOutRoutes: React.FunctionComponent = () => (
   <Switch>
     <Route path="/" exact={true}>
-      <OutHome />
+      <Login />
     </Route>
     <Route path="/phone-login">
       <PhoneLogin />

@@ -8,7 +8,6 @@ export const GlobalStyle = createGlobalStyle`
         box-sizing: border-box;
     }
     body {
-    //   font-family: 'Maven Pro', sans-serif;
          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
     }
     a {
@@ -21,5 +20,8 @@ export const GlobalStyle = createGlobalStyle`
         &:active {
             outline: none;
         }
+    }
+    h1,h2,h3,h4,h5,h6{
+        font-family: 'Maven Pro', sans-serif;
     }
 `;
