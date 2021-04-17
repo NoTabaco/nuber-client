@@ -19,4 +19,5 @@ Client for the (N)Uber Clone. ReactJS, Apollo, Typescript
 - [ ] Settings
 - [ ] Saved Places
 - [ ] Add Place
+- [ ] Find Address
 - [ ] Challenge: Ride History
