@@ -1,4 +1,5 @@
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import Helmet from "react-helmet";
+import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import bgImage from "../../images/bg.png";
 
@@ -65,10 +66,13 @@ const SocialLink = styled.span`
   cursor: pointer;
 `;
 
-interface IProps extends RouteComponentProps {}
+interface IProps extends RouteComponentProps<any> {}
 
 const LoginPresenter: React.FunctionComponent<IProps> = () => (
   <Container>
+    <Helmet>
+      <title>Login | Nuber</title>
+    </Helmet>
     <Header>
       <Logo>
         <Title>Nuber</Title>
@@ -78,11 +82,15 @@ const LoginPresenter: React.FunctionComponent<IProps> = () => (
       <PhoneLogin>
         <Subtitle>Get moving with Nuber</Subtitle>
         <FakeInput>
-          🇰🇷 +82 <Grey>Enter yout mobile number</Grey>
+          <Link to="/phone-login">
+            🇰🇷 +82 <Grey>Enter yout mobile number</Grey>
+          </Link>
         </FakeInput>
       </PhoneLogin>
       <SocialLogin>
-        <SocialLink>Or connect with social</SocialLink>
+        <Link to="/social-login">
+          <SocialLink>Or connect with social</SocialLink>
+        </Link>
       </SocialLogin>
     </Footer>
   </Container>
