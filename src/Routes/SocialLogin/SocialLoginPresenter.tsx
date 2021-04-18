@@ -21,6 +21,7 @@ const BackArrowExtended = styled(BackArrow)`
 const Link = styled.span`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Icon = styled.span`
