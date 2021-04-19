@@ -1,16 +1,15 @@
 import { useState } from "react";
+import { Mutation } from "react-apollo";
 import { RouteComponentProps, withRouter } from "react-router";
 import { toast } from "react-toastify";
+import {
+  startPhoneVerification,
+  startPhoneVerificationVariables,
+} from "../../types/api";
 import PhoneLoginPresenter from "./PhoneLoginPresenter";
+import { PHONE_SIGN_IN } from "./PhoneQueries.queries";
 
-interface IState {
-  countryCode: string;
-  phoneNumber: string;
-}
-
-const PhoneLoginContainer: React.FunctionComponent<
-  RouteComponentProps<IState>
-> = () => {
+const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = () => {
   const [countryCodeState, setCountryCodeState] = useState({
     countryCode: "+82",
   });
@@ -33,25 +32,42 @@ const PhoneLoginContainer: React.FunctionComponent<
     }
   };
 
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(
-      `${countryCode}${phoneNumber}`
-    );
-    if (isValid) {
-      return;
-    } else {
-      toast.error("Please write a valid phone number");
-    }
-  };
-
   return (
-    <PhoneLoginPresenter
-      countryCode={countryCode}
-      phoneNumber={phoneNumber}
-      onInputChange={onInputChange}
-      onSubmit={onSubmit}
-    />
+    <Mutation<startPhoneVerification, startPhoneVerificationVariables>
+      mutation={PHONE_SIGN_IN}
+      variables={{ phoneNumber: `${countryCode}${phoneNumber}` }}
+      onCompleted={(data) => {
+        const { StartPhoneVerification } = data;
+        if (StartPhoneVerification.ok) {
+          return;
+        } else {
+          toast.error(StartPhoneVerification.error);
+        }
+      }}
+    >
+      {(mutation, { loading }) => {
+        const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+          event.preventDefault();
+          const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(
+            `${countryCode}${phoneNumber}`
+          );
+          if (isValid) {
+            mutation();
+          } else {
+            toast.error("Please write a valid phone number");
+          }
+        };
+        return (
+          <PhoneLoginPresenter
+            countryCode={countryCode}
+            phoneNumber={phoneNumber}
+            onInputChange={onInputChange}
+            onSubmit={onSubmit}
+            loading={loading}
+          />
+        );
+      }}
+    </Mutation>
   );
 };
 

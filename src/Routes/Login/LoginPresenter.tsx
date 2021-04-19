@@ -1,4 +1,4 @@
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import bgImage from "../../images/bg.png";

@@ -10,7 +10,6 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@types/react-helmet": "^6.1.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/styled-components": "^5.1.9",
     "apollo-boost": "^0.4.9",
@@ -19,7 +18,7 @@
     "react": "^17.0.2",
     "react-apollo": "^3.1.5",
     "react-dom": "^17.0.2",
-    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^1.0.9",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-toastify": "^7.0.3",
@@ -32,7 +31,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "precodegen": "apollo client:download-schema --endpoint=http://localhost:4000/graphql",
+    "codegen": "apollo client:codegen src/types/api.d.ts --queries='src/**/*.queries.ts' --addTypename --localSchemaFile=./schema.json --target typescript --outputFlat"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "apollo": "^2.32.5"
   }
 }

@@ -1,4 +1,5 @@
 import { graphql } from "react-apollo";
+import { HelmetProvider } from "react-helmet-async";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "styled-components";
@@ -8,10 +9,12 @@ import { IS_LOGGED_IN } from "./AppQueries";
 
 const AppContainer: any = ({ data }: { data: any }) => (
   <>
-    <ThemeProvider theme={theme}>
-      <AppPresenter isLoggedIn={data.auth.isLoggedIn} />
-    </ThemeProvider>
-    <ToastContainer draggable={true} position={"bottom-center"} />
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <AppPresenter isLoggedIn={data.auth.isLoggedIn} />
+      </ThemeProvider>
+      <ToastContainer draggable={true} position={"bottom-center"} />
+    </HelmetProvider>
   </>
 );
 
