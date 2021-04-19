@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   RouteComponentProps,
   useHistory,
@@ -9,6 +10,9 @@ import VerifyPhonePresenter from "./VerifyPhonePresenter";
 interface IProps extends RouteComponentProps<any> {}
 
 const VerifyPhoneContainer: React.FC<IProps> = () => {
+  const [keyState, setKeyState] = useState({ key: "" });
+  const { key } = keyState;
+
   const location = useLocation();
   const history = useHistory();
 
@@ -16,7 +20,16 @@ const VerifyPhoneContainer: React.FC<IProps> = () => {
     history.push("/");
   }
 
-  return <VerifyPhonePresenter />;
+  const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const {
+      target: { name, value },
+    } = event;
+    if (name === "key") {
+      setKeyState({ key: value });
+    }
+  };
+
+  return <VerifyPhonePresenter key={key} onChange={onInputChange} />;
 };
 
 export default withRouter(VerifyPhoneContainer);
