@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Mutation } from "react-apollo";
-import { RouteComponentProps, withRouter } from "react-router";
+import { RouteComponentProps, useHistory, withRouter } from "react-router";
 import { toast } from "react-toastify";
 import {
   startPhoneVerification,
@@ -32,6 +32,8 @@ const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = () => 
     }
   };
 
+  const history = useHistory();
+
   return (
     <Mutation<startPhoneVerification, startPhoneVerificationVariables>
       mutation={PHONE_SIGN_IN}
@@ -48,11 +50,16 @@ const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = () => 
       {(mutation, { loading }) => {
         const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
           event.preventDefault();
-          const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(
-            `${countryCode}${phoneNumber}`
-          );
+          const phone = `${countryCode}${phoneNumber}`;
+          const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
           if (isValid) {
-            mutation();
+            // mutation();
+            history.push({
+              pathname: "/verify-phone",
+              state: {
+                phone,
+              },
+            });
           } else {
             toast.error("Please write a valid phone number");
           }

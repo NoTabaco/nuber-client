@@ -1,3 +1,3 @@
-const VerifyPhone = () => <span>VerifyPhone</span>;
+import VerifyPhoneContainer from "./VerifyPhoneContainer";
 
-export default VerifyPhone;
+export default VerifyPhoneContainer;

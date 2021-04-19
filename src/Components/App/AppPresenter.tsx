@@ -34,7 +34,7 @@ const LoggedOutRoutes: React.FunctionComponent = () => (
     <Route path="/phone-login">
       <PhoneLogin />
     </Route>
-    <Route path="/verify-phone/:number">
+    <Route path="/verify-phone">
       <VerifyPhone />
     </Route>
     <Route path="/social-login">
