@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Mutation } from "react-apollo";
-import { RouteComponentProps, useHistory, withRouter } from "react-router";
+import { RouteComponentProps, useHistory, withRouter } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   startPhoneVerification,
   startPhoneVerificationVariables,
 } from "../../types/api";
 import PhoneLoginPresenter from "./PhoneLoginPresenter";
-import { PHONE_SIGN_IN } from "./PhoneQueries.queries";
+import { PHONE_SIGN_IN } from "./PhoneQueries";
 
 const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = () => {
   const [countryCodeState, setCountryCodeState] = useState({
