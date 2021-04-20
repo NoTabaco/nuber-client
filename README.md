@@ -8,7 +8,7 @@ Client for the (N)Uber Clone. ReactJS, Apollo, Typescript
 
 - [x] Home
 - [x] Phone Login
-- [ ] Verify Phone Number
+- [x] Verify Phone Number
 - [ ] Social Login
 
 ### Logged In:

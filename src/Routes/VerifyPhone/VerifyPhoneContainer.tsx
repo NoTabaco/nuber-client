@@ -7,6 +7,7 @@ import {
   withRouter,
 } from "react-router-dom";
 import { toast } from "react-toastify";
+import { LOG_USER_IN } from "../../sharedQueries";
 import { verifyPhone, verifyPhoneVariables } from "../../types/api";
 import VerifyPhonePresenter from "./VerifyPhonePresenter";
 import { VERIFY_PHONE } from "./VerifyPhoneQueries";
@@ -40,26 +41,37 @@ const VerifyPhoneContainer: React.FC<IProps> = () => {
   };
 
   return (
-    <Mutation<verifyPhone, verifyPhoneVariables>
-      mutation={VERIFY_PHONE}
-      variables={{ phoneNumber, key: verificationKey }}
-      onCompleted={(data) => {
-        const { CompletePhoneVerification } = data;
-        if (CompletePhoneVerification.ok) {
-          console.log(CompletePhoneVerification.token);
-          toast.success("You're verified, logging in now");
-        } else {
-          toast.error(CompletePhoneVerification.error);
-        }
-      }}
-    >
-      {(mutation, { loading }) => (
-        <VerifyPhonePresenter
-          verificationKey={verificationKey}
-          onChange={onInputChange}
-          onSubmit={mutation}
-          loading={loading}
-        />
+    <Mutation mutation={LOG_USER_IN}>
+      {(logUserIn: any) => (
+        <Mutation<verifyPhone, verifyPhoneVariables>
+          mutation={VERIFY_PHONE}
+          variables={{ phoneNumber, key: verificationKey }}
+          onCompleted={(data) => {
+            const { CompletePhoneVerification } = data;
+            if (CompletePhoneVerification.ok) {
+              // After fixed it ! Originally, Changed profile Screen
+              if (CompletePhoneVerification.token === null) {
+                logUserIn({
+                  variables: {
+                    token: `${Math.random()}`,
+                  },
+                });
+              }
+              toast.success("You're verified, logging in now");
+            } else {
+              toast.error(CompletePhoneVerification.error);
+            }
+          }}
+        >
+          {(mutation, { loading }) => (
+            <VerifyPhonePresenter
+              verificationKey={verificationKey}
+              onChange={onInputChange}
+              onSubmit={mutation}
+              loading={loading}
+            />
+          )}
+        </Mutation>
       )}
     </Mutation>
   );
