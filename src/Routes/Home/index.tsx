@@ -1,3 +1,3 @@
-const Home = () => <span>Home</span>;
+import HomeContainer from "./HomeContainer";
 
-export default Home;
+export default HomeContainer;
