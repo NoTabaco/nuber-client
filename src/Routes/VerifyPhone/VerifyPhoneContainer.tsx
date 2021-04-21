@@ -7,7 +7,7 @@ import {
   withRouter,
 } from "react-router-dom";
 import { toast } from "react-toastify";
-import { LOG_USER_IN } from "../../sharedQueries";
+import { LOG_USER_IN } from "../../sharedQueries.local";
 import { verifyPhone, verifyPhoneVariables } from "../../types/api";
 import VerifyPhonePresenter from "./VerifyPhonePresenter";
 import { VERIFY_PHONE } from "./VerifyPhoneQueries";
@@ -49,7 +49,7 @@ const VerifyPhoneContainer: React.FC<IProps> = () => {
           onCompleted={(data) => {
             const { CompletePhoneVerification } = data;
             if (CompletePhoneVerification.ok) {
-              // After fixed it ! Originally, Changed profile Screen
+              // I'll fix it later. Routing to email sign-up screen.
               if (CompletePhoneVerification.token === null) {
                 logUserIn({
                   variables: {

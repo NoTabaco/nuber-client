@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mutation } from "react-apollo";
+import { Mutation, MutationFunction } from "react-apollo";
 import { RouteComponentProps, useHistory, withRouter } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -34,6 +34,22 @@ const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = () => 
 
   const history = useHistory();
 
+  let mutation: MutationFunction<
+    startPhoneVerification,
+    startPhoneVerificationVariables
+  >;
+
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    const phone = `${countryCode}${phoneNumber}`;
+    const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
+    if (isValid) {
+      mutation();
+    } else {
+      toast.error("Please write a valid phone number");
+    }
+  };
+
   return (
     <Mutation<startPhoneVerification, startPhoneVerificationVariables>
       mutation={PHONE_SIGN_IN}
@@ -56,17 +72,8 @@ const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = () => 
         }
       }}
     >
-      {(mutation, { loading }) => {
-        const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
-          event.preventDefault();
-          const phone = `${countryCode}${phoneNumber}`;
-          const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
-          if (isValid) {
-            mutation();
-          } else {
-            toast.error("Please write a valid phone number");
-          }
-        };
+      {(phoneMutation, { loading }) => {
+        mutation = phoneMutation;
         return (
           <PhoneLoginPresenter
             countryCode={countryCode}
