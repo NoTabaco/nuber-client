@@ -1,3 +1,3 @@
-const EditAccount = () => <span>EditAccount</span>;
+import EditAccountContainer from "./EditAccountContainer";
 
-export default EditAccount;
+export default EditAccountContainer;
