@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Query } from "react-apollo";
+import { USER_PROFILE } from "../../sharedQueries";
+import { userProfile } from "../../types/api";
 import HomePresenter from "./HomePresenter";
 
 const HomeContainer: React.FC = () => {
@@ -13,7 +16,17 @@ const HomeContainer: React.FC = () => {
     });
   };
 
-  return <HomePresenter isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />;
+  return (
+    <Query<userProfile> query={USER_PROFILE}>
+      {({ loading }) => (
+        <HomePresenter
+          loading={loading}
+          isMenuOpen={isMenuOpen}
+          toggleMenu={toggleMenu}
+        />
+      )}
+    </Query>
+  );
 };
 
 export default HomeContainer;
