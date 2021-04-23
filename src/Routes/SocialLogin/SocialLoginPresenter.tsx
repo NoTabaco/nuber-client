@@ -44,7 +44,7 @@ const SocialLoginPresenter: React.FunctionComponent<IProps> = ({
     <BackArrowExtended backTo="/" />
     <Title>Choose an account</Title>
     <FacebookLogin
-      appId="2882867768663135"
+      appId="908977486556907"
       fields="name,first_name,last_name,email"
       callback={loginCallback}
       render={(renderProps: any) => (

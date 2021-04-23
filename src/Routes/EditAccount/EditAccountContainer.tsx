@@ -70,6 +70,7 @@ const EditAccountContainer: React.FC = () => {
   return (
     <Query<userProfile>
       query={USER_PROFILE}
+      fetchPolicy={"cache-and-network"}
       onCompleted={(data) => updateFields(data)}
     >
       {() => (

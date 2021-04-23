@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Mutation, MutationFunction } from "react-apollo";
 import { toast } from "react-toastify";
 import { LOG_USER_IN } from "../../sharedQueries.local";
@@ -7,13 +6,6 @@ import SocialLoginPresenter from "./SocialLoginPresenter";
 import { FACEBOOK_CONNECT } from "./SocialLoginQueries";
 
 const SocialLoginContainer: React.FunctionComponent = () => {
-  const [fbState, setFbState] = useState({
-    firstName: "",
-    lastName: "",
-    email: null,
-    fbId: "",
-  });
-
   let mutation: MutationFunction<facebookConnect, facebookConnectVariables>;
 
   const loginCallback = (response: any) => {
@@ -27,14 +19,13 @@ const SocialLoginContainer: React.FunctionComponent = () => {
     } = response;
     if (accessToken) {
       toast.success(`Welcome ${name}!`);
-      setFbState({
-        firstName: first_name,
-        lastName: last_name,
-        email,
-        fbId: userID,
-      });
       mutation({
-        variables: { ...fbState },
+        variables: {
+          email,
+          fbId: userID,
+          firstName: first_name,
+          lastName: last_name,
+        },
       });
     } else {
       toast.error("Could not log you in 😔");

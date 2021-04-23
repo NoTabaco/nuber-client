@@ -1,3 +1,3 @@
-const Settings = () => <span>Settings</span>;
+import SettingsContainer from "./SettingsContainer";
 
-export default Settings;
+export default SettingsContainer;
