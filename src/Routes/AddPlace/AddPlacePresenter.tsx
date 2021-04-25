@@ -1,3 +1,4 @@
+import { MutationFunction } from "react-apollo";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -5,6 +6,7 @@ import Button from "../../Components/Button";
 import Form from "../../Components/Form";
 import Header from "../../Components/Header";
 import Input from "../../Components/Input";
+import { addPlace, addPlaceVariables } from "../../types/api";
 
 const Container = styled.div`
   padding: 0px 40px;
@@ -24,6 +26,7 @@ interface IProps {
   address: string;
   name: string;
   onInputChange: React.ChangeEventHandler<HTMLInputElement>;
+  onSubmit: MutationFunction<addPlace, addPlaceVariables>;
   loading: boolean;
 }
 
@@ -31,6 +34,7 @@ const AddPlacePresenter: React.FC<IProps> = ({
   address,
   name,
   onInputChange,
+  onSubmit,
   loading,
 }) => (
   <>
@@ -39,7 +43,7 @@ const AddPlacePresenter: React.FC<IProps> = ({
     </Helmet>
     <Header title={"Add Place"} backTo={"/"} />
     <Container>
-      <Form submitFn={null}>
+      <Form submitFn={onSubmit}>
         <ExtendedInput
           placeholder={"Name"}
           type={"text"}

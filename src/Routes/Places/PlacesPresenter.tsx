@@ -29,19 +29,19 @@ const PlacesPresenter: React.FC<IProps> = ({
     </Helmet>
     <Header title={"Places"} backTo={"/"} />
     <Container>
-      {!loading && places && places.length === 0 && (
-        <SLink to={"/add-place"}>Add some places!</SLink>
-      )}
+      {!loading && places && places.length === 0 && "You have no places"}
       {!loading &&
         places &&
         places.map((place) => (
           <Place
             key={place!.id}
+            id={place!.id}
             fav={place!.isFav}
             name={place!.name}
             address={place!.address}
           />
         ))}
+      <SLink to={"/add-place"}>Add some places!</SLink>
     </Container>
   </>
 );
