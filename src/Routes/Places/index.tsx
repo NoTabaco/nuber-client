@@ -1,3 +1,3 @@
-const Places = () => <span>Places</span>;
+import PlacesContainer from "./PlacesContainer";
 
-export default Places;
+export default PlacesContainer;
