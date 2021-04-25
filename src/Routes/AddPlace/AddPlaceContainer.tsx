@@ -11,10 +11,10 @@ const AddPlaceContainer = () => {
   const [placeState, setPlaceState] = useState({
     address: "",
     name: "",
-    lat: 1.23,
-    lng: 1.23,
+    lat: 0,
+    lng: 0,
   });
-
+  const { lat, lng } = placeState;
   const history = useHistory();
 
   const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -52,6 +52,7 @@ const AddPlaceContainer = () => {
           onInputChange={onInputChange}
           onSubmit={addPlaceFn}
           loading={loading}
+          pickedAddress={lat !== 0 && lng !== 0}
         />
       )}
     </Mutation>
