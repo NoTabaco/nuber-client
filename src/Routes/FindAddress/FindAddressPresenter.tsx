@@ -1,4 +1,3 @@
-import React from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components";
 import AddressBar from "../../Components/AddressBar";
@@ -44,32 +43,27 @@ interface IProps {
   onPickPlace: () => void;
 }
 
-class FindAddressPresenter extends React.Component<IProps> {
-  public render() {
-    const {
-      mapRef,
-      address,
-      onInputChange,
-      onInputBlur,
-      onPickPlace,
-    } = this.props;
-    return (
-      <div>
-        <Helmet>
-          <title>Find Address | Nuber</title>
-        </Helmet>
-        <AddressBar
-          onBlur={onInputBlur}
-          onChange={onInputChange}
-          name={"address"}
-          value={address}
-        />
-        <Center>📍</Center>
-        <Map ref={mapRef} />
-        <ExtendedButton value={"Pick this place"} onClick={onPickPlace} />
-      </div>
-    );
-  }
-}
+const FindAddressPresenter: React.FC<IProps> = ({
+  mapRef,
+  address,
+  onInputChange,
+  onInputBlur,
+  onPickPlace,
+}) => (
+  <div>
+    <Helmet>
+      <title>Find Address | Nuber</title>
+    </Helmet>
+    <AddressBar
+      onBlur={onInputBlur}
+      onChange={onInputChange}
+      name={"address"}
+      value={address}
+    />
+    <Center>📍</Center>
+    <Map ref={mapRef} />
+    <ExtendedButton value={"Pick this place"} onClick={onPickPlace} />
+  </div>
+);
 
 export default FindAddressPresenter;
