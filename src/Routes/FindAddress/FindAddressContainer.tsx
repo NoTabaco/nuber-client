@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { reverseGeoCode } from "../../mapHelpers";
+import { geoCode, reverseGeoCode } from "../../mapHelpers";
 import FindAddressPresenter from "./FindAddressPresenter";
 
 interface IState {
@@ -39,18 +39,26 @@ class FindAddressContainer extends React.Component<any, IState> {
       lng: longitude,
     });
     this.loadMap(latitude, longitude);
+    this.reverseGeoCodeAddress(latitude, longitude);
   };
 
   public handleGeoError = () => {
     console.log("No location");
   };
 
-  public handleDragEnd = async () => {
+  public handleDragEnd = () => {
     const newCenter = this.map.getCenter();
     const lat = newCenter.lat();
     const lng = newCenter.lng();
+    this.setState({ lat, lng });
+    this.reverseGeoCodeAddress(lat, lng);
+  };
+
+  public reverseGeoCodeAddress = async (lat: number, lng: number) => {
     const reversedAddress = await reverseGeoCode(lat, lng);
-    this.setState({ lat, lng, address: reversedAddress });
+    if (reversedAddress !== false) {
+      this.setState({ address: reversedAddress });
+    }
   };
 
   public onInputChange: React.ChangeEventHandler<HTMLInputElement> = (
@@ -64,8 +72,17 @@ class FindAddressContainer extends React.Component<any, IState> {
     } as any);
   };
 
-  public onInputBlur = () => {
-    console.log("Address upadted");
+  public onInputBlur = async () => {
+    const { address } = this.state;
+    if (address === "") {
+      return;
+    }
+    const result = await geoCode(address);
+    if (result !== false) {
+      const { formatted_address: address, lat, lng } = result;
+      this.setState({ address, lat, lng });
+      this.map.panTo({ lat, lng });
+    }
   };
 
   public loadMap = (lat: number, lng: number) => {
@@ -74,6 +91,7 @@ class FindAddressContainer extends React.Component<any, IState> {
     const mapNode = ReactDOM.findDOMNode(this.mapRef.current);
     const mapConfig: google.maps.MapOptions = {
       zoom: 11,
+      minZoom: 8,
       center: {
         lat,
         lng,
