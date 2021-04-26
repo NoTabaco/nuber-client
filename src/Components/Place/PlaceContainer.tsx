@@ -12,7 +12,6 @@ interface IProps {
 }
 
 const PlaceContainer: React.FC<IProps> = ({ fav, name, address, id }) => {
-  console.log(fav);
   return (
     <Mutation<editPlace, editPlaceVariables>
       mutation={EDIT_PLACE}
