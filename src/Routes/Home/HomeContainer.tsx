@@ -25,7 +25,16 @@ const HomeContainer: React.FC = (props: any) => {
     duration: "",
     price: 0,
   });
-  const { lat, lng, toLat, toLng, isMenuOpen, toAddress } = homeState;
+  const {
+    price,
+    distance,
+    lat,
+    lng,
+    toLat,
+    toLng,
+    isMenuOpen,
+    toAddress,
+  } = homeState;
 
   const toggleMenu = () => {
     setHomeState({
@@ -173,19 +182,39 @@ const HomeContainer: React.FC = (props: any) => {
       // TravelMode DRIVING is not yet supported in Korea.
       travelMode: google.maps.TravelMode.TRANSIT,
     };
-    directionsService.route(directionsOptions, (result, status) => {
-      if (status === "OK") {
-        const { routes } = result;
-        const {
-          distance: { text: distance },
-          duration: { text: duration },
-        } = routes[0].legs[0];
-        setHomeState({ ...homeState, distance, duration });
-        directions.setDirections(result);
-        directions.setMap(map);
-      } else {
-        toast.error("There is no route there, you have to swim");
-      }
+    directionsService.route(directionsOptions, handleRouteRequest);
+  };
+
+  const handleRouteRequest = (
+    result: google.maps.DirectionsResult,
+    status: google.maps.DirectionsStatus
+  ) => {
+    if (status === "OK") {
+      const { routes } = result;
+      const {
+        distance: { text: distance },
+        duration: { text: duration },
+      } = routes[0].legs[0];
+      setHomeState({ ...homeState, distance, duration });
+      directions.setDirections(result);
+      directions.setMap(map);
+    } else {
+      toast.error("There is no route there, you have to swim");
+    }
+  };
+
+  useEffect(() => {
+    if (distance === "") {
+      return;
+    } else {
+      setPrice();
+    }
+  }, [distance]);
+
+  const setPrice = () => {
+    setHomeState({
+      ...homeState,
+      price: Math.floor(parseFloat(distance.replace("km", "")) * 3),
     });
   };
 
@@ -201,6 +230,7 @@ const HomeContainer: React.FC = (props: any) => {
           toAddress={toAddress}
           onInputChange={onInputChange}
           onAddressSubmit={onAddressSubmit}
+          price={price}
         />
       )}
     </Query>
