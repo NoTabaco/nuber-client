@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Query } from "react-apollo";
+import { graphql, Query } from "react-apollo";
 import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
 import { geoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
-import { userProfile } from "../../types/api";
+import {
+  reportMovement,
+  reportMovementVariables,
+  userProfile,
+} from "../../types/api";
 import HomePresenter from "./HomePresenter";
+import { REPORT_LOCATION } from "./HomeQueries";
 
 let map: google.maps.Map;
 let toMarker: google.maps.Marker;
@@ -62,11 +67,18 @@ const HomeContainer: React.FC = (props: any) => {
   };
 
   const handleGeoWatchSuccess = (position: GeolocationPosition) => {
+    const { reportLocation } = props;
     const {
       coords: { latitude, longitude },
     } = position;
     userMarker.setPosition({ lat: latitude, lng: longitude });
     map.panTo({ lat: latitude, lng: longitude });
+    reportLocation({
+      variables: {
+        lastLat: latitude,
+        lastLng: longitude,
+      },
+    });
   };
 
   const handleGeoWatchError = () => {
@@ -237,4 +249,7 @@ const HomeContainer: React.FC = (props: any) => {
   );
 };
 
-export default HomeContainer;
+export default graphql<any, reportMovement, reportMovementVariables>(
+  REPORT_LOCATION,
+  { name: "reportLocation" }
+)(HomeContainer);
