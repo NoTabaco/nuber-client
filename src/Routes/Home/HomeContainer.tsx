@@ -201,7 +201,7 @@ const HomeContainer: React.FC = (props: any) => {
     } else {
       createPath();
     }
-  }, [toLat || toLng]);
+  }, [toLat, toLng]);
 
   const createPath = () => {
     if (directions) {
@@ -280,9 +280,6 @@ const HomeContainer: React.FC = (props: any) => {
             });
             existingDriver.setMap(map);
           } else {
-            if (userMarker) {
-              userMarker.setMap(null);
-            }
             const markerOptions: google.maps.MarkerOptions = {
               position: {
                 lat: driver.lastLat,
