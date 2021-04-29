@@ -85,7 +85,7 @@ interface IProps {
 }
 
 const MenuPresenter: React.FC<IProps> = ({
-  data: { GetMyProfile: { user = {} } = {} } = {},
+  data: { GetMyProfile: { user = null } = {} } = {},
   loading,
   toggleDrivingFn,
 }) => (

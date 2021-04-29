@@ -5,22 +5,25 @@ import { toast } from "react-toastify";
 import { geoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
 import {
+  getDrivers,
   reportMovement,
   reportMovementVariables,
   userProfile,
 } from "../../types/api";
 import HomePresenter from "./HomePresenter";
-import { REPORT_LOCATION } from "./HomeQueries";
+import { GET_NEARBY_DRIVERS, REPORT_LOCATION } from "./HomeQueries";
 
 let map: google.maps.Map;
 let toMarker: google.maps.Marker;
 let userMarker: google.maps.Marker;
 let directions: google.maps.DirectionsRenderer;
+let driversMarker: google.maps.Marker[] = [];
 
 const HomeContainer: React.FC = (props: any) => {
   let mapRef: any = useRef();
   const [homeState, setHomeState] = useState({
     isMenuOpen: false,
+    isDriving: false,
     lat: 0,
     lng: 0,
     toAddress: "",
@@ -38,6 +41,7 @@ const HomeContainer: React.FC = (props: any) => {
     toLat,
     toLng,
     isMenuOpen,
+    isDriving,
     toAddress,
   } = homeState;
 
@@ -89,6 +93,10 @@ const HomeContainer: React.FC = (props: any) => {
     const { google } = props;
     const maps = google.maps;
     const mapNode = ReactDOM.findDOMNode(mapRef.current);
+    if (!mapNode) {
+      loadMap(lat, lng);
+      return;
+    }
     const mapConfig: google.maps.MapOptions = {
       zoom: 13,
       center: {
@@ -230,20 +238,72 @@ const HomeContainer: React.FC = (props: any) => {
     });
   };
 
+  const handleNearbyDrivers = (data: getDrivers) => {
+    const {
+      GetNearbyDrivers: { ok, drivers },
+    } = data;
+    if (ok && drivers) {
+      for (const driver of drivers) {
+        if (driver && driver.lastLat && driver.lastLng) {
+          const markerOptions: google.maps.MarkerOptions = {
+            position: {
+              lat: driver.lastLat,
+              lng: driver.lastLng,
+            },
+            icon: {
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              scale: 5,
+            },
+          };
+          const newMarker: google.maps.Marker = new google.maps.Marker(
+            markerOptions
+          );
+          newMarker.set("ID", driver.id);
+          newMarker.setMap(map);
+          driversMarker.push(newMarker);
+        }
+      }
+    }
+  };
+
+  const handleProfileQuery = (data: userProfile) => {
+    const { GetMyProfile } = data;
+    if (GetMyProfile.user) {
+      const {
+        user: { isDriving },
+      } = GetMyProfile;
+      setHomeState({ ...homeState, isDriving });
+    }
+  };
+
   // Incheon Airport
   return (
-    <Query<userProfile> query={USER_PROFILE}>
-      {({ loading }) => (
-        <HomePresenter
-          loading={loading}
-          isMenuOpen={isMenuOpen}
-          toggleMenu={toggleMenu}
-          mapRef={mapRef}
-          toAddress={toAddress}
-          onInputChange={onInputChange}
-          onAddressSubmit={onAddressSubmit}
-          price={price}
-        />
+    <Query<userProfile> query={USER_PROFILE} onCompleted={handleProfileQuery}>
+      {({ data, loading }) => (
+        <Query<getDrivers>
+          query={GET_NEARBY_DRIVERS}
+          fetchPolicy={"cache-and-network"}
+          pollInterval={1000}
+          skip={isDriving}
+          onCompleted={(data) => {
+            if (isDriving) return;
+            handleNearbyDrivers(data);
+          }}
+        >
+          {() => (
+            <HomePresenter
+              loading={loading}
+              isMenuOpen={isMenuOpen}
+              toggleMenu={toggleMenu}
+              mapRef={mapRef}
+              toAddress={toAddress}
+              onInputChange={onInputChange}
+              onAddressSubmit={onAddressSubmit}
+              data={data}
+              price={price}
+            />
+          )}
+        </Query>
       )}
     </Query>
   );
