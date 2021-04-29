@@ -1,17 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { graphql, Query } from "react-apollo";
+import { graphql, Mutation, Query } from "react-apollo";
 import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
-import { geoCode } from "../../mapHelpers";
+import { geoCode, reverseGeoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
 import {
   getDrivers,
   reportMovement,
   reportMovementVariables,
+  requestRide,
+  requestRideVariables,
   userProfile,
 } from "../../types/api";
 import HomePresenter from "./HomePresenter";
-import { GET_NEARBY_DRIVERS, REPORT_LOCATION } from "./HomeQueries";
+import {
+  GET_NEARBY_DRIVERS,
+  REPORT_LOCATION,
+  REQUEST_RIDE,
+} from "./HomeQueries";
 
 let map: google.maps.Map;
 let toMarker: google.maps.Marker;
@@ -24,6 +30,7 @@ const HomeContainer: React.FC = (props: any) => {
   const [homeState, setHomeState] = useState({
     isMenuOpen: false,
     isDriving: false,
+    fromAddress: "",
     lat: 0,
     lng: 0,
     toAddress: "",
@@ -36,13 +43,15 @@ const HomeContainer: React.FC = (props: any) => {
   const {
     price,
     distance,
+    duration,
+    fromAddress,
     lat,
     lng,
+    toAddress,
     toLat,
     toLng,
     isMenuOpen,
     isDriving,
-    toAddress,
   } = homeState;
 
   const toggleMenu = () => {
@@ -63,7 +72,18 @@ const HomeContainer: React.FC = (props: any) => {
       lat: latitude,
       lng: longitude,
     });
+    getFromAddress(latitude, longitude);
     loadMap(latitude, longitude);
+  };
+
+  const getFromAddress = async (lat: number, lng: number) => {
+    const address = await reverseGeoCode(lat, lng);
+    if (address) {
+      setHomeState({
+        ...homeState,
+        fromAddress: address,
+      });
+    }
   };
 
   const handleGeoError: PositionErrorCallback = () => {
@@ -260,6 +280,9 @@ const HomeContainer: React.FC = (props: any) => {
             });
             existingDriver.setMap(map);
           } else {
+            if (userMarker) {
+              userMarker.setMap(null);
+            }
             const markerOptions: google.maps.MarkerOptions = {
               position: {
                 lat: driver.lastLat,
@@ -307,17 +330,35 @@ const HomeContainer: React.FC = (props: any) => {
           }}
         >
           {() => (
-            <HomePresenter
-              loading={loading}
-              isMenuOpen={isMenuOpen}
-              toggleMenu={toggleMenu}
-              mapRef={mapRef}
-              toAddress={toAddress}
-              onInputChange={onInputChange}
-              onAddressSubmit={onAddressSubmit}
-              data={data}
-              price={price}
-            />
+            <Mutation<requestRide, requestRideVariables>
+              mutation={REQUEST_RIDE}
+              variables={{
+                pickUpAddress: fromAddress,
+                pickUpLat: lat,
+                pickUpLng: lng,
+                dropOffAddress: toAddress,
+                dropOffLat: toLat,
+                dropOffLng: toLng,
+                price,
+                distance,
+                duration,
+              }}
+            >
+              {(requestRideFn) => (
+                <HomePresenter
+                  loading={loading}
+                  isMenuOpen={isMenuOpen}
+                  toggleMenu={toggleMenu}
+                  mapRef={mapRef}
+                  toAddress={toAddress}
+                  onInputChange={onInputChange}
+                  onAddressSubmit={onAddressSubmit}
+                  requestRideFn={requestRideFn}
+                  data={data}
+                  price={price}
+                />
+              )}
+            </Mutation>
           )}
         </Query>
       )}
