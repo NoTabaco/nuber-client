@@ -5,7 +5,11 @@ import styled from "styled-components";
 import AddressBar from "../../Components/AddressBar";
 import Button from "../../Components/Button";
 import Menu from "../../Components/Menu";
+import RidePopUp from "../../Components/RidePopUp";
 import {
+  acceptRide,
+  acceptRideVariables,
+  getRides,
   requestRide,
   requestRideVariables,
   userProfile,
@@ -59,6 +63,8 @@ interface IProps {
   onInputChange: React.ChangeEventHandler<HTMLInputElement>;
   onAddressSubmit: () => Promise<void>;
   requestRideFn: MutationFunction<requestRide, requestRideVariables>;
+  acceptRideFn: MutationFunction<acceptRide, acceptRideVariables>;
+  nearbyRide?: getRides;
   data?: userProfile;
   price: number;
 }
@@ -72,6 +78,8 @@ const HomePresenter: React.FC<IProps> = ({
   onInputChange,
   onAddressSubmit,
   requestRideFn,
+  acceptRideFn,
+  nearbyRide: { GetNearbyRide: { ride = null } = {} } = {},
   data: { GetMyProfile: { user = null } = {} } = {},
   price,
 }) => (
@@ -106,6 +114,18 @@ const HomePresenter: React.FC<IProps> = ({
           onClick={requestRideFn}
           disabled={toAddress === ""}
           value={`Request Ride ($${price})`}
+        />
+      )}
+      {ride && (
+        <RidePopUp
+          id={ride.id}
+          pickUpAddress={ride.pickUpAddress}
+          dropOffAddress={ride.dropOffAddress}
+          price={ride.price}
+          distance={ride.distance}
+          passengerName={ride.passenger.fullName!}
+          passengerPhoto={ride.passenger.profilePhoto!}
+          acceptRideFn={acceptRideFn}
         />
       )}
       <Map ref={mapRef} />

@@ -5,7 +5,10 @@ import { toast } from "react-toastify";
 import { geoCode, reverseGeoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
 import {
+  acceptRide,
+  acceptRideVariables,
   getDrivers,
+  getRides,
   reportMovement,
   reportMovementVariables,
   requestRide,
@@ -14,7 +17,9 @@ import {
 } from "../../types/api";
 import HomePresenter from "./HomePresenter";
 import {
+  ACCEPT_RIDE,
   GET_NEARBY_DRIVERS,
+  GET_NEARBY_RIDE,
   REPORT_LOCATION,
   REQUEST_RIDE,
 } from "./HomeQueries";
@@ -29,30 +34,33 @@ const HomeContainer: React.FC = (props: any) => {
   let mapRef: any = useRef();
   const [homeState, setHomeState] = useState({
     isMenuOpen: false,
-    isDriving: false,
     fromAddress: "",
-    lat: 0,
-    lng: 0,
-    toAddress: "",
+    toAddress: "Incheon Airport",
     toLat: 0,
     toLng: 0,
     distance: "",
     duration: "",
     price: 0,
   });
+  const [fromState, setFromState] = useState({
+    lat: 0,
+    lng: 0,
+  });
+  const [driveState, setDriveState] = useState({
+    isDriving: false,
+  });
   const {
     price,
     distance,
     duration,
     fromAddress,
-    lat,
-    lng,
     toAddress,
     toLat,
     toLng,
     isMenuOpen,
-    isDriving,
   } = homeState;
+  const { lat, lng } = fromState;
+  const { isDriving } = driveState;
 
   const toggleMenu = () => {
     setHomeState({
@@ -67,11 +75,7 @@ const HomeContainer: React.FC = (props: any) => {
     const {
       coords: { latitude, longitude },
     } = position;
-    setHomeState({
-      ...homeState,
-      lat: latitude,
-      lng: longitude,
-    });
+    setFromState({ lat: latitude, lng: longitude });
     getFromAddress(latitude, longitude);
     loadMap(latitude, longitude);
   };
@@ -183,7 +187,7 @@ const HomeContainer: React.FC = (props: any) => {
       toMarker = new maps.Marker(toMarkerOptions);
       toMarker.setMap(map);
       const bounds = new maps.LatLngBounds();
-      bounds.extend({ lat: homeState.lat, lng: homeState.lng });
+      bounds.extend({ lat: fromState.lat, lng: fromState.lng });
       bounds.extend({ lat, lng });
       map.fitBounds(bounds);
       setHomeState({
@@ -236,6 +240,7 @@ const HomeContainer: React.FC = (props: any) => {
         duration: { text: duration },
       } = routes[0].legs[0];
       setHomeState({ ...homeState, distance, duration });
+
       directions.setDirections(result);
       directions.setMap(map);
     } else {
@@ -308,18 +313,26 @@ const HomeContainer: React.FC = (props: any) => {
       const {
         user: { isDriving },
       } = GetMyProfile;
-      setHomeState({ ...homeState, isDriving });
+      setDriveState({ isDriving });
     }
   };
 
-  // Incheon Airport
+  const handleRideRequest = (data: requestRide) => {
+    const { RequestRide } = data;
+    if (RequestRide.ok) {
+      toast.success("Drive requested, finding a driver");
+    } else {
+      toast.error(RequestRide.error);
+    }
+  };
+
   return (
     <Query<userProfile> query={USER_PROFILE} onCompleted={handleProfileQuery}>
       {({ data, loading }) => (
         <Query<getDrivers>
           query={GET_NEARBY_DRIVERS}
           fetchPolicy={"cache-and-network"}
-          pollInterval={1000}
+          pollInterval={5000}
           skip={isDriving}
           onCompleted={(data) => {
             if (isDriving) return;
@@ -329,6 +342,7 @@ const HomeContainer: React.FC = (props: any) => {
           {() => (
             <Mutation<requestRide, requestRideVariables>
               mutation={REQUEST_RIDE}
+              onCompleted={handleRideRequest}
               variables={{
                 pickUpAddress: fromAddress,
                 pickUpLat: lat,
@@ -342,18 +356,30 @@ const HomeContainer: React.FC = (props: any) => {
               }}
             >
               {(requestRideFn) => (
-                <HomePresenter
-                  loading={loading}
-                  isMenuOpen={isMenuOpen}
-                  toggleMenu={toggleMenu}
-                  mapRef={mapRef}
-                  toAddress={toAddress}
-                  onInputChange={onInputChange}
-                  onAddressSubmit={onAddressSubmit}
-                  requestRideFn={requestRideFn}
-                  data={data}
-                  price={price}
-                />
+                <Query<getRides> query={GET_NEARBY_RIDE} skip={!isDriving}>
+                  {({ data: nearbyRide }) => (
+                    <Mutation<acceptRide, acceptRideVariables>
+                      mutation={ACCEPT_RIDE}
+                    >
+                      {(acceptRideFn) => (
+                        <HomePresenter
+                          loading={loading}
+                          isMenuOpen={isMenuOpen}
+                          toggleMenu={toggleMenu}
+                          mapRef={mapRef}
+                          toAddress={toAddress}
+                          onInputChange={onInputChange}
+                          onAddressSubmit={onAddressSubmit}
+                          requestRideFn={requestRideFn}
+                          acceptRideFn={acceptRideFn}
+                          data={data}
+                          price={price}
+                          nearbyRide={nearbyRide}
+                        />
+                      )}
+                    </Mutation>
+                  )}
+                </Query>
               )}
             </Mutation>
           )}
