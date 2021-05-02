@@ -13,7 +13,7 @@ Client for the (N)Uber Clone. ReactJS, Apollo, Typescript
 
 ### Logged In:
 
-- [ ] Home
+- [x] Home
 - [ ] Ride
 - [ ] Chat
 - [x] Edit Account
