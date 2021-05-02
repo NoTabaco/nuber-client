@@ -2,6 +2,7 @@ import { SubscribeToMoreOptions } from "apollo-client";
 import { useEffect, useRef, useState } from "react";
 import { graphql, Mutation, Query } from "react-apollo";
 import ReactDOM from "react-dom";
+import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import { geoCode, reverseGeoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
@@ -319,12 +320,22 @@ const HomeContainer: React.FC = (props: any) => {
     }
   };
 
+  const history = useHistory();
+
   const handleRideRequest = (data: requestRide) => {
     const { RequestRide } = data;
     if (RequestRide.ok) {
       toast.success("Drive requested, finding a driver");
+      history.push(`/ride/${RequestRide.ride!.id}`);
     } else {
       toast.error(RequestRide.error);
+    }
+  };
+
+  const handleRideAcceptance = (data: acceptRide) => {
+    const { UpdateRideStatus } = data;
+    if (UpdateRideStatus.ok) {
+      history.push(`/ride/${UpdateRideStatus.rideId}`);
     }
   };
 
@@ -381,6 +392,7 @@ const HomeContainer: React.FC = (props: any) => {
                     return (
                       <Mutation<acceptRide, acceptRideVariables>
                         mutation={ACCEPT_RIDE}
+                        onCompleted={handleRideAcceptance}
                       >
                         {(acceptRideFn) => (
                           <HomePresenter

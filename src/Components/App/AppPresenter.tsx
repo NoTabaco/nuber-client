@@ -49,7 +49,7 @@ const LoggedInRoutes: React.FunctionComponent = () => (
     <Route path="/" exact={true}>
       <Home />
     </Route>
-    <Route path="/ride" exact={true}>
+    <Route path="/ride/:rideId" exact={true}>
       <Ride />
     </Route>
     <Route path="/edit-account" exact={true}>
