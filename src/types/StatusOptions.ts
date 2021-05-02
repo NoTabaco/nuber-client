@@ -1,0 +1,7 @@
+export enum StatusOptions {
+  ACCEPTED = "ACCEPTED",
+  CANCELLED = "CANCELLED",
+  FINISHED = "FINISHED",
+  ONROUTE = "ONROUTE",
+  REQUESTING = "REQUESTING",
+}

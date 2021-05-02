@@ -326,7 +326,12 @@ const HomeContainer: React.FC = (props: any) => {
     const { RequestRide } = data;
     if (RequestRide.ok) {
       toast.success("Drive requested, finding a driver");
-      history.push(`/ride/${RequestRide.ride!.id}`);
+      history.push({
+        pathname: `/ride/${RequestRide.ride!.id}`,
+        state: {
+          rideId: RequestRide.ride!.id,
+        },
+      });
     } else {
       toast.error(RequestRide.error);
     }
@@ -335,7 +340,12 @@ const HomeContainer: React.FC = (props: any) => {
   const handleRideAcceptance = (data: acceptRide) => {
     const { UpdateRideStatus } = data;
     if (UpdateRideStatus.ok) {
-      history.push(`/ride/${UpdateRideStatus.rideId}`);
+      history.push({
+        pathname: `/ride/${UpdateRideStatus.rideId}`,
+        state: {
+          rideId: UpdateRideStatus.rideId,
+        },
+      });
     }
   };
 
