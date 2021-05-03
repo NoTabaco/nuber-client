@@ -121,7 +121,14 @@ const RidePresenter: React.FC<IProps> = ({
               />
             )}
           {ride.status !== StatusOptions.REQUESTING && (
-            <Link to={`/chat/${ride.chatId}`}>
+            <Link
+              to={{
+                pathname: `/chat/${ride.chatId}`,
+                state: {
+                  chatId: ride.chatId,
+                },
+              }}
+            >
               <ExtendedButton value={"Chat"} onClick={null} />
             </Link>
           )}

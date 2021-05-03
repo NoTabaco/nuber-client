@@ -31,6 +31,7 @@ const RideContainer: React.FC = () => {
         <Query<getRide, getRideVariables>
           query={GET_RIDE}
           variables={{ rideId: state?.rideId }}
+          pollInterval={5000}
         >
           {({ data, loading, subscribeToMore }) => {
             const subscribeOptions: SubscribeToMoreOptions = {
