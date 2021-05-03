@@ -10,6 +10,7 @@ const Container = styled.div``;
 const Chat = styled.div`
   height: 75vh;
   padding: 0 20px;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

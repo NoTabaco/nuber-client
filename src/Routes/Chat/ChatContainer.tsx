@@ -1,3 +1,4 @@
+import { SubscribeToMoreOptions } from "apollo-client";
 import { useState } from "react";
 import { Mutation, MutationFunction, Query } from "react-apollo";
 import { useHistory, useLocation } from "react-router-dom";
@@ -10,7 +11,7 @@ import {
   userProfile,
 } from "../../types/api";
 import ChatPresenter from "./ChatPresenter";
-import { GET_CHAT, SEND_MESSAGE } from "./ChatQueries";
+import { GET_CHAT, SEND_MESSAGE, SUBSCRIBE_TO_MESSAGES } from "./ChatQueries";
 
 interface ILocationState {
   chatId: number;
@@ -59,25 +60,62 @@ const ChatContainer: React.FC = () => {
           query={GET_CHAT}
           variables={{ chatId: state?.chatId }}
         >
-          {({ data, loading }) => (
-            <Mutation<sendMessage, sendMessageVariables>
-              mutation={SEND_MESSAGE}
-            >
-              {(sendMessageFn) => {
-                sendMessageFunc = sendMessageFn;
-                return (
-                  <ChatPresenter
-                    data={data}
-                    loading={loading}
-                    userData={userData}
-                    messageText={messageText}
-                    onInputChange={onInputChange}
-                    onSubmit={onSubmit}
-                  />
-                );
-              }}
-            </Mutation>
-          )}
+          {({ data, loading, subscribeToMore }) => {
+            const subscribeOptions: SubscribeToMoreOptions = {
+              document: SUBSCRIBE_TO_MESSAGES,
+              updateQuery: (prev, { subscriptionData }) => {
+                if (!subscriptionData.data) {
+                  return prev;
+                }
+                const {
+                  data: { MessageSubscription },
+                } = subscriptionData;
+                const {
+                  GetChat: {
+                    chat: { messages },
+                  },
+                } = prev;
+                const newMessageId = MessageSubscription.id;
+                const latestMessageId = messages[messages.length - 1].id;
+                if (newMessageId === latestMessageId) {
+                  return;
+                }
+                const newObj = Object.assign({}, prev, {
+                  GetChat: {
+                    ...prev.GetChat,
+                    chat: {
+                      ...prev.GetChat.chat,
+                      messages: [
+                        ...prev.GetChat.chat.messages,
+                        MessageSubscription,
+                      ],
+                    },
+                  },
+                });
+                return newObj;
+              },
+            };
+            subscribeToMore(subscribeOptions);
+            return (
+              <Mutation<sendMessage, sendMessageVariables>
+                mutation={SEND_MESSAGE}
+              >
+                {(sendMessageFn) => {
+                  sendMessageFunc = sendMessageFn;
+                  return (
+                    <ChatPresenter
+                      data={data}
+                      loading={loading}
+                      userData={userData}
+                      messageText={messageText}
+                      onInputChange={onInputChange}
+                      onSubmit={onSubmit}
+                    />
+                  );
+                }}
+              </Mutation>
+            );
+          }}
         </Query>
       )}
     </Query>
