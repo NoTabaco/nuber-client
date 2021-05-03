@@ -9,6 +9,7 @@ import {
   updateRideVariables,
   userProfile,
 } from "../../types/api";
+import { StatusOptions } from "../../types/statusOptions";
 import RidePresenter from "./RidePresenter";
 import { GET_RIDE, RIDE_SUBSCRIPTION, UPDATE_RIDE_STATUS } from "./RideQueries";
 
@@ -38,14 +39,20 @@ const RideContainer: React.FC = () => {
                 if (!subscriptionData.data) {
                   return prev;
                 }
-                console.log(prev, subscriptionData);
+                const {
+                  data: {
+                    RideStatusSubscription: { status },
+                  },
+                } = subscriptionData;
+                if (status === StatusOptions.FINISHED) {
+                  window.location.href = "/";
+                }
               },
             };
             subscribeToMore(subscribeOptions);
             return (
               <Mutation<updateRide, updateRideVariables>
                 mutation={UPDATE_RIDE_STATUS}
-                refetchQueries={[{ query: GET_RIDE }]}
               >
                 {(updateRideFn) => (
                   <RidePresenter

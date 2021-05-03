@@ -7,6 +7,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import AddPlace from "../../Routes/AddPlace";
+import Chat from "../../Routes/Chat";
 import EditAccount from "../../Routes/EditAccount";
 import FindAddress from "../../Routes/FindAddress";
 import Home from "../../Routes/Home";
@@ -51,6 +52,9 @@ const LoggedInRoutes: React.FunctionComponent = () => (
     </Route>
     <Route path="/ride/:rideId" exact={true}>
       <Ride />
+    </Route>
+    <Route path="/chat/:chatId" exact={true}>
+      <Chat />
     </Route>
     <Route path="/edit-account" exact={true}>
       <EditAccount />

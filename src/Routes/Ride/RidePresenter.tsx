@@ -8,7 +8,7 @@ import {
   updateRideVariables,
   userProfile,
 } from "../../types/api";
-import { StatusOptions } from "../../types/StatusOptions";
+import { StatusOptions } from "../../types/statusOptions";
 
 const Container = styled.div`
   padding: 40px;
@@ -59,7 +59,6 @@ const RidePresenter: React.FC<IProps> = ({
   userData: { GetMyProfile: { user = null } = {} } = {},
   data: { GetRide: { ride = null } = {} } = {},
   updateRideFn,
-  loading,
 }) => (
   <Container>
     {ride && user && (
@@ -83,7 +82,7 @@ const RidePresenter: React.FC<IProps> = ({
         <Title>To</Title>
         <Data>{ride.dropOffAddress}</Data>
         <Title>Price</Title>
-        <Data>{ride.price}</Data>
+        <Data>{`$ ${ride.price}`}</Data>
         <Title>Distance</Title>
         <Data>{ride.distance}</Data>
         <Title>Duration</Title>
@@ -93,7 +92,7 @@ const RidePresenter: React.FC<IProps> = ({
         <Buttons>
           {ride.driver &&
             ride.driver!.id === user.id &&
-            ride.status === "ACCEPTED" && (
+            ride.status === StatusOptions.ACCEPTED && (
               <ExtendedButton
                 value={"Picked Up"}
                 onClick={() =>
@@ -108,7 +107,7 @@ const RidePresenter: React.FC<IProps> = ({
             )}
           {ride.driver &&
             ride.driver!.id === user.id &&
-            ride.status === "ONROUTE" && (
+            ride.status === StatusOptions.ONROUTE && (
               <ExtendedButton
                 value={"Finished"}
                 onClick={() =>
@@ -121,12 +120,11 @@ const RidePresenter: React.FC<IProps> = ({
                 }
               />
             )}
-          {(ride.driver && ride.driver!.id === user.id) ||
-            (ride.passenger.id === user.id && ride.status === "ACCEPTED" && (
-              <Link to={`/chat/${ride!.chatId}`}>
-                <ExtendedButton value={"Chat"} onClick={null} />
-              </Link>
-            ))}
+          {ride.status !== StatusOptions.REQUESTING && (
+            <Link to={`/chat/${ride.chatId}`}>
+              <ExtendedButton value={"Chat"} onClick={null} />
+            </Link>
+          )}
         </Buttons>
       </>
     )}
