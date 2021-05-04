@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/nuber-client/static/js/main.c68b969a.chunk.js",
-    "main.js.map": "/nuber-client/static/js/main.c68b969a.chunk.js.map",
+    "main.js": "/nuber-client/static/js/main.baa377ba.chunk.js",
+    "main.js.map": "/nuber-client/static/js/main.baa377ba.chunk.js.map",
     "runtime-main.js": "/nuber-client/static/js/runtime-main.c654cb0c.js",
     "runtime-main.js.map": "/nuber-client/static/js/runtime-main.c654cb0c.js.map",
     "static/css/2.ffda3d49.chunk.css": "/nuber-client/static/css/2.ffda3d49.chunk.css",
@@ -16,6 +16,6 @@
     "static/js/runtime-main.c654cb0c.js",
     "static/css/2.ffda3d49.chunk.css",
     "static/js/2.da4ec291.chunk.js",
-    "static/js/main.c68b969a.chunk.js"
+    "static/js/main.baa377ba.chunk.js"
   ]
 }
