@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.js": "/nuber-client/static/js/main.c68b969a.chunk.js",
+    "main.js.map": "/nuber-client/static/js/main.c68b969a.chunk.js.map",
+    "runtime-main.js": "/nuber-client/static/js/runtime-main.c654cb0c.js",
+    "runtime-main.js.map": "/nuber-client/static/js/runtime-main.c654cb0c.js.map",
+    "static/css/2.ffda3d49.chunk.css": "/nuber-client/static/css/2.ffda3d49.chunk.css",
+    "static/js/2.da4ec291.chunk.js": "/nuber-client/static/js/2.da4ec291.chunk.js",
+    "static/js/2.da4ec291.chunk.js.map": "/nuber-client/static/js/2.da4ec291.chunk.js.map",
+    "index.html": "/nuber-client/index.html",
+    "static/css/2.ffda3d49.chunk.css.map": "/nuber-client/static/css/2.ffda3d49.chunk.css.map",
+    "static/js/2.da4ec291.chunk.js.LICENSE.txt": "/nuber-client/static/js/2.da4ec291.chunk.js.LICENSE.txt",
+    "static/media/bg.28f141b1.png": "/nuber-client/static/media/bg.28f141b1.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c654cb0c.js",
+    "static/css/2.ffda3d49.chunk.css",
+    "static/js/2.da4ec291.chunk.js",
+    "static/js/main.c68b969a.chunk.js"
+  ]
+}
